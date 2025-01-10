@@ -1,0 +1,26 @@
+CXX = g++-14
+CXXFLAG = -std=c++20 -Wall -g -MMD
+
+CLIENT_OBJECTS=client.o net_utils.o
+CLIENT_EXEC=client
+SERVER_OBJECTS=server.o net_utils.o
+SERVER_EXEC=server
+
+DEPENDS= ${CLIENT_OBJECTS:.o=.d} ${SERVER_OBJECTS:.o=.d}
+
+all: ${CLIENT_EXEC} ${SERVER_EXEC}
+
+${CLIENT_EXEC}: ${CLIENT_OBJECTS}
+	${CXX} ${CXXFLAG} ${CLIENT_OBJECTS} -o ${CLIENT_EXEC}
+
+${SERVER_EXEC}: ${SERVER_OBJECTS}
+	${CXX} ${SERVER_CXXFLAG} ${SERVER_OBJECTS} -o ${SERVER_EXEC}
+
+%.o: %.cc
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
+
+-include ${DEPENDS}
+
+PHONY: clean
+clean:
+	rm -f ${CLIENT_OBJECTS} ${SERVER_OBJECTS} ${CLIENT_EXEC} ${SERVER_EXEC}

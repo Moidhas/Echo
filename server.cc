@@ -10,11 +10,6 @@
 #define PORT 49152
 #define BACKLOG 5
 
-static void die(const char *msg) {
-    fprintf(stderr, "[%d] %s\n", errno, msg);
-    abort();
-}
-
 struct Conn {
     int fd = -1;
     uint32_t len = 0;
@@ -51,6 +46,11 @@ struct Conn {
 private: 
     char *start = nullptr;
 };
+
+static void die(const char *msg) {
+    fprintf(stderr, "[%d] %s\n", errno, msg);
+    abort();
+}
 
 int handleRead(Conn &conn, int bytes) {
     int rbytes = 0;
@@ -101,7 +101,6 @@ int setupListenSocket() {
 }
 
 
-
 int main() {
     int ret;
     std::unordered_map<int, Conn> conns;
@@ -130,9 +129,7 @@ int main() {
                 if (rbytes < 0) die("handleRead()");
                 conns.erase(tevent.ident);
                 close(tevent.ident);
-            }
-
-            if (tevent.ident == listenfd && tevent.filter == EVFILT_READ) {
+            } else if (tevent.ident == listenfd && tevent.filter == EVFILT_READ) {
                 int connfd = acceptConn(listenfd, kq);
                 if (connfd < 0) die("accept()");
 
@@ -143,7 +140,6 @@ int main() {
                 conns[connfd] = Conn{connfd};
             } else if (tevent.filter == EVFILT_READ) {
                 Conn &conn = conns[tevent.ident];
-
                 int rbytes = handleRead(conn, tevent.data);
                 if (rbytes < 0)  die("handleRead()");
 
@@ -153,8 +149,6 @@ int main() {
                 }
             }
         }
-
-
     }
 
     close(listenfd);

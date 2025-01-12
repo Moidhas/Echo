@@ -1,9 +1,9 @@
 CXX = g++-14
 CXXFLAG = -std=c++20 -Wall -g -MMD
 
-CLIENT_OBJECTS=client.o net_utils.o
+CLIENT_OBJECTS=client.o
 CLIENT_EXEC=client
-SERVER_OBJECTS=server.o net_utils.o
+SERVER_OBJECTS=server.o
 SERVER_EXEC=server
 
 DEPENDS= ${CLIENT_OBJECTS:.o=.d} ${SERVER_OBJECTS:.o=.d}

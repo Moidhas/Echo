@@ -75,16 +75,9 @@ int main() {
         return errno;
     }
 
-    // Pipe line test
-    std::vector<std::string> pipelinedReq = {
-        "1", "2", "3", std::string(32 << 15, '4'), "5",
-    };
-
-    for (const std::string &req: pipelinedReq) {
+    std::string req;
+    while (std::getline(std::cin, req)) {
         if (sendReq(fd, req) <= 0) return -1;
-    }
-
-    for (int i = 0; i < pipelinedReq.size(); ++i) {
         if (readRes(fd) <= 0) return -1;
     }
 
